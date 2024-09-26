@@ -7,11 +7,12 @@
 - [IAM Best Practices](#iam-best-practices)
 - [IAM Shared Responsibility Model](#iam-shared-responsibility-model)
 
-Identity Access Management is a Global Service.
+Identity Access Management is a Global Service. So, there's no need to select a region like us-east-1 for this. 
 
 - First we have our Root Account. This account should not be shared or even used. We must use only to Create another users, called IAM Users.
-- Users are people in our organization and they can be grouped.
-- The Groups only contain users. (Not allowed Group Chain).
+- Users are people in a organization and they can be grouped. e.g. A group "developer" contains the user who are developers.
+- A user can also belong to multiple groups.
+- The Groups only contain users. ( not the other groups).
 - Groups and Users are needed, because AWS Services needs Permissions, and we create these permissions for each group or user.
 
 ### IAM Permissions
@@ -21,7 +22,7 @@ Identity Access Management is a Global Service.
 - Users and Groups can be assigned to JSON Documents that contains the permissions (allowing or denying).
 - Policies define the permissions to users/groups.
 - Apply the "Least Privilege Principle". Only give the needed permissions.
-
+  
 Policy content:
 
 ```
@@ -49,6 +50,18 @@ Condition (Optional) – Specify the circumstances under which the policy grants
 ```
 
 [AWS Docs Reference](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html#access_policies-json)
+
+**Policy types**
+
+- Identity-based policies 
+- Resource-based policies 
+- Permissions boundaries
+- Organizations SCPs
+- Access control lists (ACLs)
+- Session policies
+  
+![Identity-based Policies](https://github.com/user-attachments/assets/9d3f6a22-78bf-4724-adeb-0b9d2260da8a)
+
 
 **Roles**
 
