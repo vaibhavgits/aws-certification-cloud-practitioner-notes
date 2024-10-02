@@ -108,15 +108,15 @@ m5.2xlarge
 - 5: generation of the instance (AWS improve them over time)
 - 2xlarge: the size of the instance. (Memory, CPU, etc... )
 
-There are a few [instance types](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html):
+There are a few [instance types]([https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html](https://aws.amazon.com/ec2/instance-types/)):
 
 **General Purpose**:
 
 - Great for a diversity of workloads such as web services and code repositories.
 - Use cases: Small and midsize databases, Data processing tasks that require additional memory, Caching fleets.
 - This one have a good balance between the compute, memory and networking.
-- t2.micro is an example
-
+- Instance Class: T and M. e.g. t2.micro
+  
 **Compute Optimized**:
 
 - Great for compute-intensive workloads that require high performance processors.
@@ -125,33 +125,50 @@ There are a few [instance types](https://docs.aws.amazon.com/AWSEC2/latest/UserG
 
 **Memory Optimized**:
 
-- These types have fast performance for workloads that require in-memory processing.
+- These types have fast performance for workloads that require in-memory processing ( requires more RAM).
 - Use cases: High-performance, relational (MySQL) and NoSQL (MongoDB, Cassandra) databases. Distributed web scale cache stores that provide in-memory caching of key-value type data (Memcached and Redis). In-memory databases using optimized data storage formats and analytics for business intelligence (for example, SAP HANA). Applications performing real-time processing of big unstructured data (financial services, Hadoop/Spark clusters). High-performance computing (HPC) and Electronic Design Automation (EDA) applications.
-
-- Most of the instances of this type starts with _R_ (that remembers RAM). We also have instances starting with _X_.
+- Most of the instances of this type starts with _R_ (R stnads for RAM). We also have instances starting with _X_ and _U_.
 
 **Storage Optimized**
 
-- Made for storage-intense tasks that require high, sequential Read and Write access to large data sets on local storage
+- Made for storage-intense tasks that require high, sequential Read and Write access to large data sets on local storage. 
 - Use cases: High Frequency Online Transaction Processing (OLTP) systems, Relational and NoSQL databases, Cache for in-memory database (like Redis), Data warehousing, Distributed file systems.
+- Most of the instances of this type starts with _D_ , _H_ and _I_.
 
 **Accelerated Computing**:
 
-- Simmilar to Memory optimized, but this one use hardware accelerators, or co-processors, to perform functions such as floating point number calculations, graphics processing, or data pattern matching, more efficiently than is possible in software running on CPUs.
+- Similar to Memory optimized, but this one use hardware accelerators, or co-processors, to perform functions such as floating point number calculations, graphics processing, or data pattern matching, more efficiently than is possible in software running on CPUs.
+- Most of the instances of this type starts with _DL_ , _F_ , _G_ , _P_ and _Trn_.
+
+**High-Performance Computing(HPC)**
+
+- High performance computing (HPC) instances are purpose built to offer the best price performance for running HPC workloads at scale on AWS.
+- Most of the instances of this type starts with _Hpc_.
 
 ---
 
 ### EC2 Security Groups
 
-- They are fundamental of network security in AWS. They control how traffic is allowed into our EC2 instances. It is the Firewall of the instance.
-- They contain only **Allow** rules
+- They control how traffic is allowed into our EC2 instances. It is the Firewall of the instance.
+- They contain only **allow** rules
 - Reference by IP or by other Security Group
-- Regulate the Access to the Ports, Authorized IP ranges (IPV4 and 6)
-- Control of inbound network (from outside to inside the instance)
-- Control of outbound network (from instance to outside) - by default, all traffic outbound (from our instance to the rest of the world) is allowed.
+- Regulate the Access to the Ports, Authorized IP ranges (IPV4 and IPv6)
+- Control of inbound network (from outside to inside the instance) - by default all inbound traffic is blocked. 
+- Control of outbound network (from instance to outside) - by default, all traffic outbound (from our instance to the rest of the world) is allowed. 
 - Common Ports that we need to know
 
 <p align="center" width="100%"><img src="assets/security-group.jpg" alt="security-group" width="400"/></p>
+
+**Good to Know about Security Groups**
+
+- One SG can be attached to multiple instances.
+- Each intance can have multiple SGs.
+- SG are specific to region/VPC combination. If you chage the region, you have to create a new SG.
+- Security Group is not an application that runs on EC2. It's a firewall that lives outside the EC2.
+- It's good to maintain one separate security group for SSH access.
+- **If your application is not accessible (time out), then it's a security group issue**
+
+### Classic Ports to know
 
 ```
 22 - SSH (Secure Shell) - log into EC2 Linux instance
@@ -166,8 +183,8 @@ There are a few [instance types](https://docs.aws.amazon.com/AWSEC2/latest/UserG
 
 ### EC2 SSH and Instance Connect
 
-- SSH is one of the most important function. It allows you to control a remote machine, uptade, and lots of configurations, all using the command line.
-- Mac, Linux and Win 10+ = SSH and Windows <10 = Putty
+- SSH is a CLI tool that allows you to control a remote machine, update, and lots of configurations, all using the command line.
+- To access Mac, Linux and Win 10+ use SSH and to access Windows <10 use Putty!
 
 ```bash
 # check permissions on .pem file (must be chmod 0400)
@@ -176,15 +193,34 @@ There are a few [instance types](https://docs.aws.amazon.com/AWSEC2/latest/UserG
 ssh -i permissionsFile.pem ec2-user@ec2-public-ip
 ```
 
-- **EC2 Instance Connect** is an Second Option to run SSH directly from Console. It runs a browser based SSH instance connection/terminal. In this case a temporary Key is uploaded to EC2 instance by AWS. Works only out-of-the-box with Amazon Linux 2.
-
+- **EC2 Instance Connect** is an Second Option to run SSH directly from Console. It runs a browser based SSH instance connection/terminal.
+- In this case a temporary Key is uploaded to EC2 instance by AWS. Works only out-of-the-box with Amazon Linux 2.
 - Remember to Allow port 22 in Security Group.
+
+---
+
+**SSH Troubleshooting**
+
+- **There's a connection timeout** - This is a security group issue. Any timeout (not just for SSH) is related to security groups or a firewall. Ensure your security group looks like this and correctly assigned to your EC2 instance.
+![image](https://github.com/user-attachments/assets/0dd8e40b-0dcf-496f-8c2d-86b97b9e483b)
+- **There's still a connection timeout issue** - If your security group is properly configured as above, and you still have connection timeout issues, then that means a firewall(corporate or a personal) is blocking the connection.
+-  **SSH does not work on Windows** - It means you have to use Putty.
+-  **There's a connection refused** - This means the instance is reachable, but no SSH utility is running on the instance.  
+  -  Try to restart the instance and If it doesn't work, terminate the instance and create a new one.
+  -  Make sure you're using Amazon Linux 2.
+- **Permission denied (publickey,gssapi-keyex,gssapi-with-mic)** - This means either two things:
+  - You are using the wrong security key or not using a security key. Please look at your EC2 instance configuration to make sure you have assigned the correct key to it.
+  - You are using the wrong user. Make sure you have started an Amazon Linux 2 EC2 instance, and make sure you're using the user ec2-user. This is something you specify when doing ec2-user@<public-ip> (ex: ec2-user@35.180.242.162) in your SSH command or your Putty configuration.
+- **Nothing is working - "aaaahhhhhh"** - Don't panic. Use EC2 Instance Connect from the next lecture. Make sure you started an Amazon Linux 2 and you will be able to follow along with the tutorial :)
+-  **I was able to connect yesterday, but today I can't** - This is probably because you have stopped your EC2 instance and then started it again today. When you do so, the public IP of your EC2 instance will change. Therefore, in your command, or Putty configuration, please make sure to edit and save the new public IP.
 
 ---
 
 ### EC2 Instance Roles
 
-In order to run or access aws services, usually in our terminal we would use `aws configure`and pass our credentials. But in EC2 instance it is not a good practice, since it is a server and can be managed by more than one person. So if you want to EC2 to perform an action in other services in our behalf, we need to create a role to this EC2.
+- In order to run or access aws services, usually in our terminal we would use `aws configure`and pass our credentials.
+- But in EC2 instance it is not a good practice, since it is a server and can be managed by more than one person. So a person can retieve our details. **Never ever put your IAM Access keys and secrets into the EC2 instance.**
+- So if you want to EC2 to perform an action in other services in our behalf, we need to create a role to this EC2.
 
 - For example: if we want to execute the command `aws iam list-users` we need to create a role to that contains the IAM Policy, in this case, the read user permission. To do it we need to create the policy and the role in our IAM Console and after that, in EC2 console, attach the role to the EC2 instance. Now our instance can perform this list-users action without require your secret keys directly inside the server.
 
@@ -204,7 +240,7 @@ EC2 Instances in the cloud, the default type of EC2 is on-demand instances.
 **Reserved Instances**:
 
 - Minimum commitment of one year, maximum of three years.
-- Up to 75% discount compared to On-Demand.
+- Up to 72% discount compared to On-Demand.
 - Purchasing options: no upfront | partial upfront | all upfront (upfront = pay all now and get more discount).
 - Can buy a instance that runs in one specific Region [Regional] or Specific Zone [Zonal] - it affects the price.
 - There are three kinds of reserved instances:
@@ -234,18 +270,34 @@ About the prices: A Standard Reserved Instance provides a more significant disco
 
 - An Amazon EC2 Dedicated Host is a physical server with EC2 instance capacity fully dedicated to your use.
 - This type address compliance requirements, reduce cost by allowing you to use your own licenses
+- They allow you to use your existing per-socket, per-core, or per-VM software licenses means Dedicated Hosts allow you to bring and use your own software licenses that are often restricted by physical hardware metrics, such as:
+  - Per-socket: Some software licenses are tied to the number of CPU sockets on a physical server. A socket is where a physical CPU chip is installed. Most motherboards have one, two, or four sockets.
+  - Per-core: Some licenses are tied to the number of CPU cores on the physical server. Each CPU chip may have multiple cores.
+  - Per-VM (Virtual Machine): Some licenses are based on the number of virtual machines (VMs) running on a host.
 - Three year reservation period
 - More expensive
 - Useful to compliance needs/regulatory issues, use software that require licenses.
 
 **EC2 Dedicated Instances**: Hardware dedicated to the customer.
 
-- Can share the hardware if instances within the same account.
+- Can share the hardware to othrer instances if instances are within the same account.
 - It is a soft version of dedicated hosts.
 
 Difference between Dedicated Hosts and EC2 Dedicated Instances
 
 - Both allow you to use dedicated server, but in the EC2 Dedicated Hosts you pay for each Host and can have more access to the hardware it is much more flexible and is recommended when you have server bound licenses, while in EC2 Dedicated Instances you pay for each instance and cannot have access to hardware.
+
+
+**EC2 Capacity Reservations**
+
+- Reserve On-Demand instances capacity in a specific AZ for any duration
+You always have access to EC2 capacity when you need it.
+- No time commitment (create/cancel anytime), no billing discounts.
+- Combine with Regional Reserved Instances and Savings Plans to benefit
+from billing discounts.
+- You're charged at On-Demand rate whether you run instances or not
+- Suitable for short-term, uninterrupted workloads that needs to be in a
+specific AZ
 
 ---
 
