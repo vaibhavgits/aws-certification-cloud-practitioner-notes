@@ -13,10 +13,11 @@
 
 **Main Information about Elastic Block Store**:
 
+- Analogy - A USB drive that can be attached to any instance via network.
 - An EBS Volume is a **network drive** that you can attach to your instance while they run. It uses the network to communicate with the instance, so it might have a little bit of latency.
 - It can be detached from an instance and attached to other quickly (benefit of network driver)
 - It Can persist data even if the instance is terminated.
-- Can be mounted to one instance at a time (On CCP level exam). One instance can have more than one EBS at a time.
+- Can be mounted to one instance at a time (For Cloud Practitioner level exam, For Associate level, multi-attach feature is available for some EBS). - One instance can have more than one EBS at a time.
 - They are bound to a specific availability zone, this means if your instance is in us-east1-a and your EBS is in us-east1-b, they cannot be bound to each other. To do it across AZs, we need **Snapshots** or create an EBS Volume to the same AZ.
 - It have a provisioned capacity in GBs or IOPs (inputs and outputs per second). The billing is based on this capacity, and this capacity can be increased/decreased over time.
 
@@ -29,6 +30,11 @@
 
 > Amazon Elastic Block Store (EBS) is an easy to use, high-performance block storage service designed for use with Amazon Elastic Compute Cloud (EC2) for both throughput and transaction-intensive workloads at any scale. A broad range of workloads, such as relational and non-relational databases, enterprise applications, containerized applications, big data analytics engines, file systems, and media workflows are widely deployed on Amazon EBS.
 
+  **EBS - Delete on Termination**
+
+  - By default, If an instance is terminated, the root EBS volume is also deleted.
+  - By default, any other EBS volume is not deleted.
+
 <p align="center" width="100%"><img src="assets/ebs.jpg" alt="ebs" width="400"/></p>
 
 ## EBS Snapshots
@@ -39,6 +45,11 @@ Snapshot is a backup of our EBS Volumes at a point in time. It keeps available i
 - With the Snapshot we can Copy to other regions or AZ's or Create a brand new EBS Volume.
 - This snapshot will be a "start" to the new EBS Volume. So the new volume will start with the data starting from the snapshot. The new volume will be a Restore from a snapshot.
 - Amazon EBS Snapshots are stored incrementally, which means you are billed only for the changed blocks stored
+
+**EBS Snapshots - Features**
+
+- EBS Snapshot Archives - Movies a snapshot to an "archive tier" that is 75% cheaper. Takes 24 hours to 72 hours for restoring the archive.
+- Recycle Bin for EBS Snapshots - Setup rules to retain deleted snapshots so you can recover them after an accidental deletion. It has specific retention duration - from 1 day to 1 year , which depends on the user. 
 
 <p align="center" width="100%"><img src="assets/ebs-snapshots.jpg" alt="ebs-snapshots" width="400"/></p>
 
