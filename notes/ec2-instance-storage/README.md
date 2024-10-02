@@ -37,6 +37,8 @@
 
 <p align="center" width="100%"><img src="assets/ebs.jpg" alt="ebs" width="400"/></p>
 
+---
+
 ## EBS Snapshots
 
 Snapshot is a backup of our EBS Volumes at a point in time. It keeps available in one Region. But to use it in a volume, we need to create the volume inside an AZ.
@@ -53,6 +55,37 @@ Snapshot is a backup of our EBS Volumes at a point in time. It keeps available i
 
 <p align="center" width="100%"><img src="assets/ebs-snapshots.jpg" alt="ebs-snapshots" width="400"/></p>
 
+---
+
+## AMI - Amazon Machine Image
+
+- AMI are a customization of an EC2 instance
+ - You add your own software, configuration, operating system, monitoring etc.
+ - Faster boot / configuration time because all your software is pre-packaged
+- AMI are built for a specific region (and can be copied across regions)
+- You can launch EC2 instances from:
+ - A Public AMI: AWS provided
+ - Your own AMI: you make and maintain them yourself
+ - An AWS Marketplace AMI: an AMI someone else made (and potentially sells)
+
+**AMI Process**
+
+- Start an EC2 instance and customize it
+- Stop the instance (for data integrity)
+- Build an AMI — this will also create EBS snapshots
+- Launch instances from other AMIs
+
+![AMI Process](https://github.com/user-attachments/assets/2aab4615-93df-4cbb-bf5b-1ed48943f3c1)
+
+---
+
+## EC2 Image Builder
+
+- 
+
+
+---
+
 ## EC2 Instance Store
 
 This is the **physical HARD DRIVE** attached to the server. Limited space, but higher performance. It is called by **ephemeral**
@@ -64,6 +97,8 @@ This is the **physical HARD DRIVE** attached to the server. Limited space, but h
 - It is Block Level storage.
 
 > An instance store provides temporary block-level storage for your EC2 instance. This storage is located on disks that are physically attached to the host computer. Instance store is ideal for the temporary storage of information that changes frequently, such as buffers, caches, scratch data, and other temporary content, or for data that is replicated across a fleet of instances, such as a load-balanced pool of web servers. Instance storage is temporary, data is lost if instance experiences failure or is terminated. EC2 instance store cannot be used for file sharing between instances.
+
+---
 
 ## EFS - Elastic File System
 
@@ -80,6 +115,8 @@ EFS stands to Elastic File System and it is a Network File System (NFS). This NF
 > Amazon Elastic File System (Amazon EFS) provides a simple, scalable, fully managed, elastic NFS file system. It is built to scale on-demand to petabytes without disrupting applications, growing and shrinking automatically as you add and remove files, eliminating the need to provision and manage capacity to accommodate growth. Amazon EFS is designed to provide massively parallel shared access to thousands of Amazon EC2 instances, enabling your applications to achieve high levels of aggregate throughput and IOPS with consistent low latencies.
 
 <p align="center" width="100%"><img src="assets/efs.jpg" alt="efs" width="300"/></p>
+
+---
 
 **EFS Storage Options**
 
