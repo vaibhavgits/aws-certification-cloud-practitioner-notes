@@ -1,5 +1,7 @@
 # 📝EC2 - Elastic Cloud Compute
 
+- [EC2 Sizing & Configuration Options](#ec2-sizing-&-configuration-options)
+- [EC2 User Data](#ec2-user-data)
 - [How to Create a Basic EC2 Instance](#How-to-Create-a-Basic-EC2-Instance)
 - [Amazon Machine Image](#Amazon-Machine-Image)
 - [EC2 Instance Types](#ec2-Instance-Types)
@@ -11,7 +13,31 @@
 - [EC2 Instance Storage](#EC2-Instance-Storage)
 - [EC2 Elastic Load Balancing and Auto Scaling Groups](#EC2-Elastic-Load-Balancing-and-Auto-Scaling-Groups)
 
-AWS EC2 is one of the most popular of AWS services. EC2 stands to Elastic Compute Cloud and is a service where you can rent virtual servers from AWS. This Cloud Computing is from Infrastructure as a Service (IaaS) type. EC2 is also a Region Scoped Service.
+EC2 stands to Elastic Compute Cloud and is a service where you can rent virtual servers or machines called EC2 instances from AWS. This Cloud Computing is from Infrastructure as a Service (IaaS) type. EC2 is also a Region Scoped Service.
+
+### EC2 Sizing & Configuration Options
+
+- Operating System (OS): Linux,\Nindows or Mac OS
+- How much compute power & cores (CPU)
+- How much random-access memory (RAM)
+- How much storage space:
+  - Network-attached (EBS & EFS)
+  - hardware (EC2 Instance Store)
+- Network card: speed of the card, Public IP address
+- Firewall rules: security group
+- Bootstrap script (configure at first launch): EC2 User Data
+
+### EC2 User Data
+
+- EC2 User Data script is used for bootstrapping.
+- Bootstrapping means launching a piece of code at the time when a machine starts.
+- This EC2 User Data Script runs once when the instane first start.
+- This script runs with the root user.
+- This script is used to automate boot tasks such as:
+  - Installing updates, softwares.
+  - Downloading common files from the internet.
+  - And much more!
+
 
 ### How to Create a Basic EC2 Instance
 
