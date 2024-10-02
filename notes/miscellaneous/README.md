@@ -3,6 +3,7 @@
 
 ### Bootstrapping
 
+- In computing, a bootstrap loader is the first piece of code that runs when a machine starts, and is responsible for loading the rest of the operating system.
 - The term "bootstrapping" usually applies to a situation where a system depends on itself to start.
 - Example
   -  How do you start an OS initialization process if you don't have the OS running yet?
