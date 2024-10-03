@@ -9,6 +9,8 @@
 - [EC2 Storage Shared Responsibility Model](#EC2-Storage-Shared-Responsibility-Model)
 - [Summary](#Summary)
 
+Amazon EC2 provides you with these storage options which can be used independently or in combination to suit your requirements:-
+
 ## EBS Elastic Block Store - Volumes
 
 **Main Information about Elastic Block Store**:
@@ -30,7 +32,7 @@
 
 > Amazon Elastic Block Store (EBS) is an easy to use, high-performance block storage service designed for use with Amazon Elastic Compute Cloud (EC2) for both throughput and transaction-intensive workloads at any scale. A broad range of workloads, such as relational and non-relational databases, enterprise applications, containerized applications, big data analytics engines, file systems, and media workflows are widely deployed on Amazon EBS.
 
-  **EBS - Delete on Termination**
+**EBS - Delete on Termination**
 
   - By default, If an instance is terminated, the root EBS volume is also deleted.
   - By default, any other EBS volume is not deleted.
@@ -81,8 +83,19 @@ Snapshot is a backup of our EBS Volumes at a point in time. It keeps available i
 
 ## EC2 Image Builder
 
-- 
+- EC2 Image Builder is used to automate the creation of VM or Container images.
+- It automates the creation, maintain, validate and test EC2 AMIs.
+- It can be run on a schedule e.g. weekly, when a package is updated etc.
+- It's a Free Service. Only pay for underlying resurces. 
 
+**How EC2 works in detail?**
+
+- EC2 Image Builder service automatically creates an EC2 instance called "Builder EC2 instance". This instance will perform tasks you defined on it such as installation of a certain softwares like java, updating packages etc. 
+- Once this is done, an AMI is created out of this EC2 instance.
+- Now EC2 Instance will create a "Test EC2 isntance" from the AMI to run certain test that you will define like security etc. You can also skip the "tests".
+- After this, AMI is distributed. 
+
+![Image Builder](https://github.com/user-attachments/assets/e4b02d20-569a-41a8-96e1-3f2eb1e9edd5)
 
 ---
 
@@ -90,9 +103,10 @@ Snapshot is a backup of our EBS Volumes at a point in time. It keeps available i
 
 This is the **physical HARD DRIVE** attached to the server. Limited space, but higher performance. It is called by **ephemeral**
 
-- Better I/O performance. It is good to buffer/cache/scratch data/temp files. Always with short workloads.
+- Better I/O performance.
+- It is good to buffer/cache/scratch data/temp files. Always with short workloads.
 - EC2 Instance Store lose their storage and data if they are stopped.
-- Risk of losing data (because it is a physical hardware)
+- Risk of losing data if hardware fails(because it is a physical hardware). 
 - Backups and Replications are our responsibility.
 - It is Block Level storage.
 
@@ -102,15 +116,29 @@ This is the **physical HARD DRIVE** attached to the server. Limited space, but h
 
 ## EFS - Elastic File System
 
-EFS stands to Elastic File System and it is a Network File System (NFS). This NFS can be attached to hundreds of EC2 instances at a time.
+EFS stands to Elastic File System and it is a Network File System (NFS). This NFS can be attached to hundreds of EC2 instances at a time which makes it a shared NFS.
 
 - Amazon EFS is a regional service storing data within and across multiple Availability Zones (AZs) for high availability and durability.
 - It is a shared NFS.
-- Works in Linux EC2 Instances and works across multiple AZs. It makes EFS High Available and Scalable. But, this also makes the EFS more expensive (3x gp2) and you pay what you use not capacity. If you use only 20gb, that's your usage and you'll pay for this.
+- Works in Linux EC2 Instances and works across multiple AZs. Amazon EFS is a regional service, meaning it works across multiple Availability Zones within the same AWS region. This means you can have EC2 instances in different AZs (e.g., one in AZ-A and another in AZ-B) and both can be attached to the same EFS file system. This allows for shared file storage across instances in different AZs, which is useful for highly available, scalable applications.
+- It makes EFS High Available and Scalable. But, this also makes the EFS more expensive (3x gp2) and you pay what you use  and not the capacity. If you use only 20gb, that's your usage and you'll pay for this.
 - High Available By Default
 - Data access: EC2 instances can access files on an EFS file system across many Availability Zones, Regions and VPCs
   - Amazon EC2 instances can access your file system across AZs, regions, and VPCs
   - On-premises servers can access using AWS Direct Connect or AWS VPN.
+
+![EFS](https://github.com/user-attachments/assets/e17274f4-9349-4625-b997-0861abf6db2d)
+
+
+**EBS vs EFS**
+
+**EBS (Elastic Block Store):** AZ-specific: An EBS volume is tied to a specific Availability Zone (AZ). So, if your EC2 instance is in AZ1, the EBS volume must also be in AZ1.
+- Cross-AZ migration: If you want to move or use the EBS volume in AZ2, you first need to create an EBS Snapshot (a backup of the volume), and then restore it to create a new EBS volume in AZ2.
+
+**EFS (Elastic File System):** Multi-AZ access: EFS is a regional service, meaning it works across multiple AZs. EC2 instances from different AZs (e.g., x instances in AZ1 and y instances in AZ2) can all access the same EFS file system.
+- EFS Mount Target: To allow EC2 instances in different AZs to access EFS, you create an EFS Mount Target in each AZ. These mount targets act as connection points for the instances in each AZ to access the EFS file system.
+
+![EBS vs EFS](https://github.com/user-attachments/assets/bbd29efe-44bc-4b3d-a502-761d1cad72e5)
 
 > Amazon Elastic File System (Amazon EFS) provides a simple, scalable, fully managed, elastic NFS file system. It is built to scale on-demand to petabytes without disrupting applications, growing and shrinking automatically as you add and remove files, eliminating the need to provision and manage capacity to accommodate growth. Amazon EFS is designed to provide massively parallel shared access to thousands of Amazon EC2 instances, enabling your applications to achieve high levels of aggregate throughput and IOPS with consistent low latencies.
 
@@ -122,21 +150,26 @@ EFS stands to Elastic File System and it is a Network File System (NFS). This NF
 
 - Amazon EFS Standard Storage Class
   - The EFS Standard storage class is designed for active file system workloads, and you pay only for the amount of file system storage you use per month. Data is stored regionally within and across multiple Availability Zones (AZs).
+    
 - Amazon EFS Standard-Infrequent Access Storage Class:
   - The EFS Standard-Infrequent Access storage class (EFS Standard-IA) is cost-optimized for files accessed less frequently. Data stored on the EFS Standard-IA storage class costs less than EFS Standard storage class, and you will pay a fee each time you read from or write to a file. Data is stored regionally within and across multiple Availability Zones (AZs).
+  - Enable EFS-IA with a Lifecycle Policy. e.g. Move files that are not accessed for 60 days to EFS-IA.
+  - When you enable EFS-IA, EFS will automatically move your files to EFS-IA based on the last time they were accessed. 
+
+![EFS IA](https://github.com/user-attachments/assets/6fefb9df-2e1a-4e68-9498-5378e88961d5)
+
+
 - Amazon EFS One Zone Storage Class:
   - The EFS One Zone storage class is designed for active file system workloads, and you pay only for the amount of file system storage you use per month. Data is stored within a single Availability Zone. Standard data transfer fees apply for inter-AZ or inter-region access to file systems.
+
 - Amazon EFS One Zone-Infrequent Access Storage Class:
   - The EFS One Zone-Infrequent Access storage class (EFS One Zone-IA) is cost-optimized for files accessed less frequently. Data stored on the EFS One Zone-IA storage class costs less than the One Zone storage class, and you will pay a fee each time you read from or write to a file. Data is stored within a single Availability Zone. Standard data transfer fees apply for inter-AZ or inter-region access to file systems.
+
 - Amazon EFS Bursting Throughput (Default):
   - In the default Bursting Throughput mode, there are no charges for bandwidth or requests, and you get a baseline rate of 50 KB/s per GB of throughput included with the price of EFS Standard storage class. Read operations are metered at a 1:3 ratio toward this rate, so you can drive up to 150 KB/s per GB of read throughput or 50 KB/s per GB of write throughput with this baseline rate.
+
 - Amazon EFS Provisioned Throughput:
   - You can optionally select the Provisioned Throughput mode and provision the throughput of your file system independent of the amount of data stored and pay separately for storage and throughput. Read operations are metered at a 1:3 ratio toward this rate, so you can drive up to 3 MB/s of read throughput or 1 MB/s of write throughput for every 1 MB/s of throughput provisioned. Like the default Bursting Throughput mode, the Provisioned Throughput mode also includes 50 KB/s per GB (or 1 MB/s per 20 GB) of throughput in the price of EFS Standard and EFS One Zone storage classes. You are billed only for the throughput provisioned above what you are provided based on data you have stored.
-
-### EBS vs EFS
-
-- EBS are bound to one AZ and can be attached to one instance at a time. To move across regions we can use the snapshots (it is just a copy).
-- EFS works across multiple regions and can be attached to multiple instances. The same data is available to all instances. It makes the EFS a shared file system.
 
 ## Amazon FSx
 
@@ -172,7 +205,7 @@ We have two types of FSx in AWS:
 **User Responsibility**
 
 - Setup backup and snapshots procedures
-- Data encryption
+- Setup Data encryption
 - Responsibility about the data content on drivers
 - Understand the risk of using [EC2 Instance Store](#EC2-Instance-Store)
 
