@@ -25,7 +25,7 @@ This is where we can see the power of cloud computing, because of the automatica
 
 - **Horizontal Scalability (elasticity)**: Means increasing the number of instances or systems to our application.
   - Have no limitations, we can always add more instances
-  - Implies to distributed systems and web apps/modern apps
+  - Implies to distributed systems and web apps/modern apps. A **distributed system** is a collection of computers or other devices that work together to achieve a common goal by sharing resources over a network. 
   - In AWS **Scale Out** means increasing the number of instances and **Scale In** means decreasing the number of instances.
   - On AWS is easy to scale because of the [**Auto Scaling Groups**](#auto-scaling-groups-asg) and [**Load Balancer**](#elastic-load-balancer-elb)
   - A few analogies:
@@ -34,7 +34,7 @@ This is where we can see the power of cloud computing, because of the automatica
 
 **High Availability**: Means that your application is available in multiple locations, in this case that our service running in multi availability zones.
 
-- High Availability means to run our app/system in at least two different AZs
+- High Availability means to run our app/system in at least 2 different AZs
   - This means more Security, Disaster Recover, Keep the work running.
 - A few analogies:
   1. To do it in AWS we have ASG and ELB that are multi-az.
@@ -46,11 +46,13 @@ This is where we can see the power of cloud computing, because of the automatica
 
 - **Elasticity**: Once the system is scalable, elasticity means that there will be some "auto-scaling" so that system can scale based on the load. This is "cloud-friendly": pay-per-use, match demand, optimize costs.
 
-- **Agility**: (not related to scale - distractor), new IT resources available very quickly. (one click away, what used to happen in weeks)
+- **Agility**: Any new IT resources available very quickly. (one click away, what used to happen in weeks)
 
 ## Elastic Load Balancer (ELB)
 
 Elastic Load Balancer are managed by AWS and they are servers that forward the internet traffic to multiple servers (EC2 Instances). `They are the backend of EC2 Instances`. The ELB is what will be exposed to the users and when receive the connection/access it will redirect traffic to instances.
+
+<p align="center" width="100%"><img src="assets/elb.jpg" alt="elb" width="400"/></p>
 
 **Why use a Load Balancer?**
 
@@ -66,17 +68,29 @@ Elastic Load Balancer are managed by AWS and they are servers that forward the i
   - AWS takes care of upgrades, maintenance, high availability
   - AWS provides only a few configuration knobs
   - We only have to configure some behaviors of our ELB
+- It costs less to setup your own load balancer but it will be a lot more
+effort on your end(maintenance, integrations)
 
 **Four Types of ELB**
 
-- Application Load Balancer: (HTTP/HTTPS only) - Layer 7
-- Network Load Balancer: (Ultra-high performance, allows TCP) - Layer 4 (handle with millions of request per second, like gaming situation).
-- Gateway Load Balancer: New AWS ELB used when you need to deploy and manage a fleet of third-party virtual appliances that support GENEVE
-- Classic Load Balancer: (slowly retiring) - Layer 4 and 7
+1.  Application Load Balancer(ALB): (HTTP/HTTPS/gRPC only) - Layer 7 type LB
+
+2.  Network Load Balancer(NLB): (Ultra-high performance, allows TCP) - Layer 4 (handle with millions of request per second, like gaming situation).
+
+3.  Gateway Load Balancer(GLB): New AWS ELB used when you need to deploy and manage a fleet of third-party virtual appliances that support GENEVE - Layer 3
+
+4.  Classic Load Balancer: (retired in 2023) - Layer 4 and 7
 
 When configuring the ELB we need to create a `Target Group`, this target group contains the instances that are going to handle the multiple access.
 
-<p align="center" width="100%"><img src="assets/elb.jpg" alt="elb" width="400"/></p>
+![LB Types](https://github.com/user-attachments/assets/4a0405a0-3296-4053-a855-1d6a8080dfeb)
+
+
+**Common Terms**
+
+- gRPC
+- ElasticIP
+- GENEVE Protocol
 
 ## Auto Scaling Groups (ASG)
 
