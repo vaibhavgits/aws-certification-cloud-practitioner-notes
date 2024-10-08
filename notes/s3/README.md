@@ -246,47 +246,62 @@ How readily(easily or consistently) available a service is. S3 standard has 99.9
 
 The S3 storage classes are:
 
+_Latency in cloud computing is the time it takes for data to travel between a user's device and a cloud server. Throughput in cloud computing is a measure of how much data can be moved through a network in a given amount of time - (MB/s) or (bps)._
+
 **Amazon S3 Standard - General Purpose:**
 
 - This is the most common. Used for frequently accessed data
 - 99,99% of Availability
 - Low latency and high throughput
-- Sustain 2 concurrent facility failures
+- Sustain 2 concurrent facility failures means if there are failures in two separate physical facilities (data centers) at the same time.
 - Use cases: Big Data analytics, mobile & gaming applications, content distribution
 
 **Amazon S3 Standard - Infrequent Access (IA):**
 
 - When you don't access the file often, but requires rapid access when needed.
-- 99,99% of Availability
+- 99.9% of Availability
 - Lower cost compared to Amazon S3 Standard, but retrieval fee
 - Sustain 2 concurrent facility failures
 - Use Cases: As a data store for disaster recovery, backups…
 
 **Amazon S3 One Zone - Infrequent Access:**
 
-- It is very similar to S3 Standard IA, but his one only saves the file in one AZ.
+- It is very similar to S3 Standard IA, but this one only saves the file in one AZ. So, data can get lost of that AZ is destoyed. 
 - 99.5% Availability
 - Lower cost compared to S3-IA (by 20%)
 - Use cases: Store secondary backups copies of non-premise data, or store data you can easily recreate or to save replicas from another regions in S3.
 
 **Amazon S3 Intelligent Tiering**
 
-- Auto select the type (Frequent or Infrequent)
-- 99,99% of Availability
+- Auto select the type (Frequent tier, Infrequent tier or Instant Access Tier)
+- Types of S3 Intelligent Tiering:
+  - Frequent Access tier (automatic): default tier
+  - Infrequent Access tier (automatic): objects not accessed for 30 days
+  - Archive Instant Access tier (automatic): objects not accessed for 90 days
+  - Archive Access tier (optional): configurable from 90 days to 700+ days
+  - Deep Archive Access tier (optional): config. from 180 days to 700+ days
+- 99.99% of Availability
 - Same Low latency and high throughput of S3 Standard
 - _Cost optimization_ by auto move the objects between tiers based on the use patterns of the object (If used often goes to S3 Standard, otherwise it goes to S3 IA).
 - It is also very resilient with events that impact an entire AZ.
 - Use cases: when you don't know exactly the tiering or want optimize costs.
 
-**Amazon Glacier**
+**Amazon S3 Glacier**
 
 - Low cost object storage (in GB/month) meant for archiving/backup
 - Data is retained for the longer term (years)
-- Retrieval options (each one has the fees for retrieval):
-  - Expedited (1 to 5 minutes)
-  - Standard (3 to 5 hours)
-  - Bulk (5 to 12 hours)
+- Pricing: price for storage + object retrieval cost
+
+**Amazon S3 Glacier Flexible Retrieval (formely Amazon S3 Glacier):** Flexible because it has following 3 types of retrieval option:
+  - Expedited retrievals  (1 to 5 minutes)
+  - Standard retrievals  (3 to 5 hours)
+  - Bulk retrievals  (5 to 12 hours) - free
 - Use cases for: for Backups and Archiving
+- Minimum storage duration of 90 days. 
+
+**Amazon S3 Glacier Instant Retrieval :** 
+- Millisecond retrieval, great for data accessed once a quarter. 
+- Minimum storage duration of 90 days. 
 
 > Amazon S3 Glacier (S3 Glacier), is a storage service optimized for infrequently used data, or "cold data. Data at rest stored in S3 Glacier is automatically server-side encrypted using 256-bit Advanced Encryption Standard (AES-256) with keys maintained by AWS.
 
@@ -295,6 +310,7 @@ The S3 storage classes are:
 - Store data for years in AWS.
 - Cheapest option for Backup and Archive
 - All the data is replicated in at minimum of 3 AZs
+- - Minimum storage duration of 180 days. 
 - Retrieval options (each one has the fees for retrieval):
   - Standard (12 hours)
   - Bulk (48 hours)
@@ -305,6 +321,26 @@ The S3 storage classes are:
 In AWS we can create the lifecycle rules, and can se the transition Rules: The transition rules are used to move the objects between the classes by the following rules:
 
 <p align="center" width="100%"><img src="assets/transition-rules.jpg" alt="transition-rules" width="400"/></p>
+
+
+## S3 Encryption
+
+- Server-Side Encryption(default): Data is encrypted after it is uploaded to S3 but before it is written to disk.
+- Client-Side Encryption, data is encrypted on the client(customer) side before it is uploaded to S3.
+
+## How data is stored in S3
+
+1. Uploading: Data is sent to S3 (through the network) and temporarily held in memory by Amazon’s S3 system (in a queue or buffer) before being permanently stored.
+2. Encryption: After S3 receives the data, but before it writes it to permanent storage (disk), the data is encrypted.
+3. Writing to Disk: Only the encrypted version of the data is finally saved on S3’s storage systems.
+
+## IAM Access Analyzer for S3
+
+- IAM Access Analyzer for S3 helps identify public and cross-account access to your S3 buckets by analyzing bucket policies, ACLs, and other configurations.
+- It notifies you if any bucket is accidently exposed to public access or to other AWS accounts that shouldn’t have access.
+- The analyzer provides detailed findings, showing which resources and accounts have access to the S3 bucket and how (via policies or permissions).
+- It helps you modify bucket policies or permissions to remove unintended access, improving security and compliance.
+  
 
 ## S3 Glacier Vault Lock and Object Lock
 
@@ -343,7 +379,15 @@ The Snow Family: Offline devices to perform data migrations. If takes more than 
 - Reasons why network transfer is limited: Limited connectivity, Limited bandwidth, High network costs, Shared bandwidth, Connection stability.
 - Example of usage with S3 use case
   - Normal method: direct upload files to S3 using network.
-  - With snow family: AWS send the device and you transfer the data to the device and send it back to AWS. Internally they will upload the data to S3 very fast.
+  - With Snow Family: Request Snowball devices from the AWS console for delivery.
+    - Install the snowball client/AWS OpsHub on your servers.
+    - Connect the snowball to your servers and copy files using the client
+    - Ship back the device when you're done (goes to the right AWS facility).
+    - Data will be loaded into an S3 bucket
+    - Snowball is completely wiped
+
+
+_If it takes more than a week to transfer over the network, use Snowball devices!_
 
 **AWS Snowball Edge**:
 
@@ -371,6 +415,7 @@ Small and portable computing device, rugged and secure that resist a multiple na
 - Can be sent back to AWS offline, or connect it to internet and use AWS DataSync to send the data.
 
 **AWS Snowmobile**:
+
 It is a truck to get all the data.
 
 - Each snowmobile has 100 PB of capacity (we can use multiple in parallel)
@@ -394,14 +439,17 @@ It is a truck to get all the data.
 
 - Process data while it is being created on an Edge Location (Anything that does not have internet or cannot access the cloud. For example: A truck on a road, a ship on sea, underground)
 - Usually to locations with limited/no internet access and limited/no easy access to computing power.
-- we setup a Snowcone or Snowball Edge to Edge computing
+- We setup a Snowcone or Snowball Edge to Edge computing
   - Preprocess data
   - Machine learning at the edge
   - Transcoding media streams
 - We can usually ship it back over time to upload the data.
 - All the devices can run EC2 Instances and AWS Lambda Functions (using AWS IoT Greengrass)
 - Long-term deployment options: 1 and 3 years of discounted pricing
-  **AWS Snowcone (smaller)**:
+
+**AWS Snowcone (smaller)**:
+
+- 2 CPUs, 4GB memory, wired/wireless access 
 
 **AWS Snowball Edge (Compute optimized)**:
 
@@ -414,7 +462,22 @@ It is a truck to get all the data.
 - Up to 40 vCPUs, 80 GiB of RAM
 - Object storage clustering available
 
-### AWS OpsHub
+
+## AWS Snowball Pricing
+
+- You pay for device usage and data transfer out ofAWS
+- Data transfer IN to Amazon S3 is $0.00 per GB
+- On-Demand
+  - Includes a one-time service fee per job, which includes:
+    - 10 days of usage for Snowball Edge Storage Optimized 80 TB
+    - 15 days of usage for Snowball Edge Storage Optimized 21 OTB
+  - Shipping days are NOT counted towards the included 10 or 15 days
+  - Pay per day for any additional days
+- Committed Upfront
+  - Pay in advance for monthly, I-year, and 3-years of usage (Edge Computing)
+  - Up to 62% discounted pricing
+
+## AWS OpsHub
 
 Historically, to use Snow Family devices, you needed a CLI (Command Line Interface tool). Today, you can use AWS OpsHub (a software you install on your computer / laptop) to
 manage your Snow Family Device.
@@ -445,12 +508,12 @@ Use cases of Hybrid Cloud for Storage:
 - Compliance requirements
 - IT strategy
 
-S3 is a proprietary storage technology (unlike EFS / NFS), so how do you expose the S3 data on-premise? AWS Storage Gateway!
+S3 is a Cloud-native technology (unlike EFS / NFS), so how do you expose the S3 data on-premise? AWS Storage Gateway!
 
 AWS Storage Cloud Native Options:
 
-- Block Storage: Elastic Block Store (EBS) and EC2 Instance Store
-- File Storage: Elastic File System (EFS)
+- Block Storage: Amazon Elastic Block Store (EBS) and EC2 Instance Store
+- File Storage: Amazon Elastic File System (EFS)
 - Object Storage: S3 and Glacier
 
 The Storage Gateway is bridge between on-premise data and cloud data in S3.
@@ -470,19 +533,19 @@ Types of Storage Gateway:
 
  <p align="center" width="100%"><img src="assets/storage-gateway.jpg" alt="storage-gateway" width="300"/></p>
 
-## S3 Shared Responsibility Model
+## S3 Shared Responsibility Model for S3
 
 **AWS**:
 
-- Infrastructure (global security, durability, availability, sustain concurrent loss of data in two facilities)
-- Configuration and Vulnerability analysis
-- Compliance Validation
+- Infrastructure (Manages global security, durability, availability, sustain concurrent loss of data in two facilities)
+- Configuration and Vulnerability analysis - Detects security vulnerabilities in infrastructure.
+- Compliance Validation - Ensures compliance with global security standards.
 
 **Customer**:
 
-- S3 Versioning, Bucket Policies, Replication Setup, Logging and Monitoring
-- S3 Storage Classes
-- Data encryption
+- S3 Versioning, Policies, Replication: Configures versioning, bucket policies, and replication.
+- S3 Storage Classes - Chooses appropriate storage classes for data.
+- Data encryption - Encrypts data in transit and at rest.
 
 ## Summary
 
