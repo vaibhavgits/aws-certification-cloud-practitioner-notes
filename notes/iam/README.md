@@ -30,8 +30,9 @@ Policy content:
 ```
 A JSON policy document includes these elements:
 
-Optional policy-wide information at the top of the document
-One or more individual statements
+- Optional policy-wide information at the top of the document
+- One or more individual statements
+
 Each statement includes information about a single permission. The information in a statement is contained within a series of elements.
 
 Version – Specify the version of the policy language that you want to use. As a best practice, use the latest 2012-10-17 version.
